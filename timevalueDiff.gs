@@ -1,12 +1,12 @@
 /**
- * Get timevalue difference
+ * Fill timevalue difference of end -start, if is_exited is 'exited', else empty
  * @param {'exited'} is_exited exited or entered
  * @param {'September 9, 2020 at 08:44AM'} start start datetime
  * @param {'September 9, 2020 at 07:11PM'} end end datetime
  * @return timevalue difference or '' if is_exited is 'entered'
  * @customfunction
  */
-function getTimediffValues(is_exited, start, end) {
+function getTimevalueDiffAtExited(is_exited, start, end) {
   if(is_exited != 'exited')return '';
   try{
     return (getDate(end)-getDate(start))/1000/60/60/24;
@@ -16,12 +16,12 @@ function getTimediffValues(is_exited, start, end) {
 }
 
 /**
- * Get timevalue difference
+ * Fill timevalue difference of `A{row}` - `A{row-1}`, if `B{row}` is 'exited', else empty
  * @param {'4'} row use `row()` to use current row
  * @return timevalue difference or '' if is_exited is 'entered'
  * @customfunction
  */
-function getTimediff(row) {
+function getTimeDiff(row) {
   try{
     var sheet = SpreadsheetApp.getActiveSpreadsheet();
     var values = sheet.getRange('A' + String(row-1) + ':B' + String(row)).getValues();
