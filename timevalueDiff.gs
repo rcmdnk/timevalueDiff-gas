@@ -24,8 +24,8 @@ function getTimevalueDiffAtExited(is_exited, start, end) {
 function getTimeDiff(row) {
   try{
     var sheet = SpreadsheetApp.getActiveSpreadsheet();
-    var values = sheet.getRange('A' + String(row-1) + ':B' + String(row)).getValues();
-    if (values[1][1] != 'exited') return '';
+    var values = sheet.getRange('A' + String(row) + ':B' + String(row+1)).getValues();
+    if (values[0][1] != 'entered') return '';
     return (getDate(values[1][0])-getDate(values[0][0]))/1000/60/60/24;
   }catch(e){
     return '';
