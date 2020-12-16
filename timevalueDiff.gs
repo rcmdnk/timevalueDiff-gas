@@ -36,12 +36,10 @@ function getTimeDiff(row) {
 function getDate(time){
   var ta = time.split(' ');
   ta.splice(3, 1);
-  if (ta[3].endsWith('PM')){
-    var time = ta[3].replace('PM', '').split(':');
-    ta[3] = String(Number(time[0]) + 12) + ':' + time[1];
-  }else{
-    ta[3] = ta[3].replace('AM', '');
-  }
+  var time = ta[3].split(':');
+  if(time[0] == '12')time[0] = '0';
+  if(time[1].endsWith('PM'))time[0] = String(Number(time[0] + 12));
+  ta[3] = time[0] + ':' + time[1].replace('AM', '').replace('PM', '');
   return new Date(ta.join(' '));
 }
 
@@ -52,9 +50,9 @@ function test(){
 }
 
 function test2(){
-  getTimediff(2);
+  getTimeDiff(2);
 }
 
 function test3(){
-  getTimediff(3);
+  getTimeDiff(3);
 }
