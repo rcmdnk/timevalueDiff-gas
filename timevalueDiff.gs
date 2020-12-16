@@ -38,7 +38,7 @@ function getDate(time){
   ta.splice(3, 1);
   var time = ta[3].split(':');
   if(time[0] == '12')time[0] = '0';
-  if(time[1].endsWith('PM'))time[0] = String(Number(time[0] + 12));
+  if(time[1].endsWith('PM'))time[0] = String(Number(time[0]) + 12);
   ta[3] = time[0] + ':' + time[1].replace('AM', '').replace('PM', '');
   return new Date(ta.join(' '));
 }
