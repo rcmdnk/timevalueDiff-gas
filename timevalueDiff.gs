@@ -87,14 +87,18 @@ function makeEachDay(){
       var remain_of_day = 1 - getTimeOnDay(d);
       while (true) {
         if(remain <= remain_of_day){
-          values.push([date, remain * 24]);
+          values.push([new Date(date), remain * 24]);
           break
         }
         var time = remain_of_day;
         remain = remain - time;
         remain_of_day = 1;
-        values.push([date, time * 24]);
+        values.push([new Date(date), time * 24]);
         date.setDate(date.getDate() + 1);
+        date.setHours(0);
+        date.setMinutes(0);
+        date.setSeconds(0);
+        date.setMilliseconds(0);
       }
     }
   });
@@ -108,6 +112,5 @@ function makeEachDay(){
   var numRows = values.length;
   var numColumns = values[0].length;
   //sheet.insertRows(2,numRows);
-  s_new.getRange(2, 1, numRows, numColumns).setValues(values);
-  
+  s_new.getRange(2, 1, numRows, numColumns).setValues(values); 
 }
