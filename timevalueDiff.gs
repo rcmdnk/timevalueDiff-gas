@@ -59,6 +59,15 @@ function getTimeOnDay(date){
   return (d1 - d0) / DAY_MS;
 }
 
+function getDayStart(date){
+  let day_start = new Date(date);
+  day_start.setHours(0);
+  day_start.setMinutes(0);
+  day_start.setSeconds(0);
+  day_start.setMilliseconds(0);
+  return day_start;
+}
+
 function makeEachDay(){
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   ss.setSpreadsheetTimeZone(TIMEZONE);
@@ -66,6 +75,7 @@ function makeEachDay(){
 
   let days = s_orig.getRange('A:A').getValues();
   let hours = s_orig.getRange('C:C').getValues();
+  let prev = '';
   let values = [];
   days.forEach(function(d, i){
     if(hours[i] != ''){
@@ -73,19 +83,24 @@ function makeEachDay(){
       let remain = hours[i];
       let remain_of_day = 1 - getTimeOnDay(d);
       while (true) {
+        if(prev != ''){
+          while(date - prev > DAY_MS){
+            prev.setDate(prev.getDate() + 1);
+            values.push([new Date(prev), 0]);
+          }
+        }
         if(remain <= remain_of_day){
           values.push([new Date(date), remain * 24]);
+          prev = getDayStart(date);
           break
         }
         const time = remain_of_day;
         remain = remain - time;
         remain_of_day = 1;
         values.push([new Date(date), time * 24]);
+        prev = getDayStart(date);
         date.setDate(date.getDate() + 1);
-        date.setHours(0);
-        date.setMinutes(0);
-        date.setSeconds(0);
-        date.setMilliseconds(0);
+        date = getDayStart(date);
       }
     }
   });
