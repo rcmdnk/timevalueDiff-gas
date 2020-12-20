@@ -84,7 +84,7 @@ function makeEachDay(){
       let remain_of_day = 1 - getTimeOnDay(d);
       while (true) {
         if(prev != ''){
-          while(date - prev > DAY_MS){
+          while(getDayStart(date) - prev > DAY_MS){
             prev.setDate(prev.getDate() + 1);
             values.push([new Date(prev), 0]);
           }
