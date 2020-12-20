@@ -1,3 +1,7 @@
+const ORIG_SHEET = '0';
+const NEW_SHEET = '1';
+const TIMEZONE = 'Asia/Tokyo';
+const TIMEZONE_OFFSET = '0900';
 const DAY_MS = 1000 * 60 * 60 * 24;
 
 /**
@@ -25,9 +29,9 @@ function getTimevalueDiffAtExited(is_exited, start, end) {
  */
 function getTimeDiff(row) {
   try{
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = ss.getSheetByName('0');
-    var values = sheet.getRange('A' + String(row) + ':B' + String(row+1)).getValues();
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName(ORIG_SHEET);
+    const values = sheet.getRange('A' + String(row) + ':B' + String(row+1)).getValues();
     if (values[0][1] != 'entered') return '';
     return (getDate(values[1][0])-getDate(values[0][0]))/DAY_MS;
   }catch(e){
@@ -37,60 +41,43 @@ function getTimeDiff(row) {
 
 
 function getDate(date){
-  var ta = String(date).split(' ');
+  let ta = String(date).split(' ');
   ta.splice(3, 1);
-  var time = ta[3].split(':');
+  let time = ta[3].split(':');
   if(time[0] == '12')time[0] = '0';
   if(time[1].endsWith('PM'))time[0] = String(Number(time[0]) + 12);
   ta[3] = time[0] + ':' + time[1].replace('AM', '').replace('PM', '');
+  ta.push('GMT+' + TIMEZONE_OFFSET);
   return new Date(ta.join(' '));
 }
 
 
 function getTimeOnDay(date){
-  var d1 = getDate(date);
-  var ta = String(date).split(' at ');
-  var d0 = getDate(ta[0] + ' at 00:00:AM'); 
+  const d1 = getDate(date);
+  const ta = String(date).split(' at ');
+  const d0 = getDate(ta[0] + ' at 00:00:AM'); 
   return (d1 - d0) / DAY_MS;
 }
 
-
-function test(){
-  var start = "September 9, 2020 at 09:44AM";
-  var end = "September 9, 2020 at 09:11PM";
-  getTimediffValues(start, end);
-}
-
-function test2(){
-  getTimeDiff(2);
-}
-
-function test3(){
-  getTimeDiff(3);
-}
-
-function test4(){
-  Logger.log('test');
-}
-
 function makeEachDay(){
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var s_orig = ss.getSheetByName('0');
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  ss.setSpreadsheetTimeZone(TIMEZONE);
+  const s_orig = ss.getSheetByName(ORIG_SHEET);
 
-  var days = s_orig.getRange('A:A').getValues();
-  var hours = s_orig.getRange('C:C').getValues();
-  var values = [];
+  let days = s_orig.getRange('A:A').getValues();
+  let hours = s_orig.getRange('C:C').getValues();
+  let values = [];
   days.forEach(function(d, i){
     if(hours[i] != ''){
-      var date = getDate(d);
-      var remain = hours[i];
-      var remain_of_day = 1 - getTimeOnDay(d);
+      let date = getDate(d);
+      let remain = hours[i];
+      let remain_of_day = 1 - getTimeOnDay(d);
       while (true) {
         if(remain <= remain_of_day){
           values.push([new Date(date), remain * 24]);
           break
         }
-        var time = remain_of_day;
+        const time = remain_of_day;
         remain = remain - time;
         remain_of_day = 1;
         values.push([new Date(date), time * 24]);
@@ -102,15 +89,14 @@ function makeEachDay(){
       }
     }
   });
-  var s_new = ss.getSheetByName('1');
-  var range = s_new.getRange("A:B");
+  const s_new = ss.getSheetByName(NEW_SHEET);
+  const range = s_new.getRange("A:B");
   range.deleteCells(SpreadsheetApp.Dimension.COLUMNS);
   s_new.getRange(1, 1, 1, 2).setValues([['StartDateTime', 'Hours']]);
   s_new.getRange('A:A').setNumberFormat('yyyy/MM/dd HH:mm:ss');
   s_new.setFrozenRows(1);
   
-  var numRows = values.length;
-  var numColumns = values[0].length;
-  //sheet.insertRows(2,numRows);
+  const numRows = values.length;
+  const numColumns = values[0].length;
   s_new.getRange(2, 1, numRows, numColumns).setValues(values); 
 }
