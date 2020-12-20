@@ -51,6 +51,7 @@ function getDate(date){
   return new Date(ta.join(' '));
 }
 
+
 function getTimeOnDay(date){
   const d1 = getDate(date);
   const ta = String(date).split(' at ');
