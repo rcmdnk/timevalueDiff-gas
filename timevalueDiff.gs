@@ -100,7 +100,7 @@ function makeEachDay(){
   const range = s_new.getRange("A:B");
   range.deleteCells(SpreadsheetApp.Dimension.COLUMNS);
   s_new.getRange(1, 1, 1, 2).setValues([['StartDateTime', 'Hours']]);
-  s_new.getRange('A:A').setNumberFormat('yyyy/MM/dd HH:mm:ss');
+  s_new.getRange('A:A').setNumberFormat('yyyy/MM/dd');
   s_new.setFrozenRows(1);
   
   const numRows = values.length;
